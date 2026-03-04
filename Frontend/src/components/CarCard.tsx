@@ -1,12 +1,6 @@
 // ===== CAR CARD COMPONENT =====
 // A reusable card that displays a single car's thumbnail, price, title, and status.
 // Used in: Index.tsx (Featured Cars grid), BrowseCars.tsx (Browse page grid)
-//
-// --- PHASE 2 BACKEND INTEGRATION ---
-// FRONTEND FILE: src/components/CarCard.tsx
-// NO API CALLS — this component receives car data via props from parent pages.
-// The `car.image` field will contain a Cloudinary URL from the database.
-// Ensure the Car interface (src/data/mockCars.ts) matches your API response shape.
 
 import { Link } from "react-router-dom";
 import { Fuel, Calendar, Gauge } from "lucide-react";
