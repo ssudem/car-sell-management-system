@@ -38,10 +38,12 @@ Stores `token` and `user` in `localStorage`.
 ### `BrowseCars.tsx`
 | Method | Endpoint | Auth | Purpose |
 |--------|----------|------|---------|
-| GET | `/api/cars?search=X&brand=Y&fuelType=Z&maxPrice=N&status=Available` | ❌ | Filtered car search |
+| GET | `/api/cars?search=X&brand=Y&fuelType=Z&maxPrice=N&status=Available&page=1&limit=6` | ❌ | Filtered car search (paginated) |
 
-**Query Params:** `search`, `brand` (multiple), `fuelType` (multiple), `maxPrice`, `status`
+**Query Params:** `search`, `brand` (multiple), `fuelType` (multiple), `maxPrice`, `status`, `page`, `limit`
 Search matches against: title, brand, description, year, fuel_type, transmission (multi-word AND logic).
+**Paginated Response:** `{ cars: [...], total: number, page: number, totalPages: number }`
+Default: 6 cars per page. Resets to page 1 on filter change.
 
 ---
 

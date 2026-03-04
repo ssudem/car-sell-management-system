@@ -98,11 +98,11 @@ const Login = () => {
         </p>
 
         {/* Demo credentials hint */}
-        <div className="mt-4 rounded-lg border border-dashed bg-secondary/50 p-3 text-xs text-muted-foreground">
+        {/* <div className="mt-4 rounded-lg border border-dashed bg-secondary/50 p-3 text-xs text-muted-foreground">
           <p className="mb-1 font-semibold text-foreground">Demo Credentials:</p>
           <p>👤 User: <span className="font-mono text-accent">user@visioncars.com</span> / any password</p>
           <p>🔑 Admin: <span className="font-mono text-accent">admin@visioncars.com</span> / any password</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

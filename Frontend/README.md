@@ -7,7 +7,7 @@ A full-stack car selling platform where admins manage car inventory and users br
 ## ✨ Features
 
 ### 👤 User Features
-- **Browse Cars** — Filter by brand, fuel type, price range; full-text search across title, brand, year, description
+- **Browse Cars** — Filter by brand, fuel type, price range; full-text search across title, brand, year, description. Paginated (6 per page)
 - **Car Details** — Image gallery with thumbnails, specs table, inquiry form
 - **Buy Now** — Simulated payment flow with processing animation and success confirmation
 - **Wishlist** — Save/remove cars to a personal wishlist
@@ -135,7 +135,7 @@ npm run dev
 |--------|----------|------|-------------|
 | POST | `/api/auth/register` | — | Register new user |
 | POST | `/api/auth/login` | — | Login user |
-| GET | `/api/cars` | — | Get all cars (with filters) |
+| GET | `/api/cars` | — | Get all cars (with filters, pagination) |
 | GET | `/api/cars/:id` | — | Get car details |
 | POST | `/api/cars` | Admin | Add new car |
 | PUT | `/api/cars/:id` | Admin | Update car |

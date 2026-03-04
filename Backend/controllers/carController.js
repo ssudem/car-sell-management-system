@@ -3,57 +3,91 @@ const getISTTimestamp = require("../utils/getISTTimestamp");
 
 exports.getAllCars = async (req, res) => {
   try {
-    let query = "SELECT * FROM cars WHERE 1=1";
+    let baseQuery = "SELECT * FROM cars WHERE 1=1";
+    let countQuery = "SELECT COUNT(*) AS total FROM cars WHERE 1=1";
     const params = [];
+    const countParams = [];
 
     if (req.query.brand) {
       const brands = Array.isArray(req.query.brand) ? req.query.brand : [req.query.brand];
-      query += ` AND brand IN (${brands.map(() => "?").join(",")})`;
+      const placeholder = ` AND brand IN (${brands.map(() => "?").join(",")})`;
+      baseQuery += placeholder;
+      countQuery += placeholder;
       params.push(...brands);
+      countParams.push(...brands);
     }
 
     if (req.query.fuelType) {
       const fuels = Array.isArray(req.query.fuelType) ? req.query.fuelType : [req.query.fuelType];
-      query += ` AND fuel_type IN (${fuels.map(() => "?").join(",")})`;
+      const placeholder = ` AND fuel_type IN (${fuels.map(() => "?").join(",")})`;
+      baseQuery += placeholder;
+      countQuery += placeholder;
       params.push(...fuels);
+      countParams.push(...fuels);
     }
 
     if (req.query.maxPrice) {
-      query += " AND price <= ?";
+      baseQuery += " AND price <= ?";
+      countQuery += " AND price <= ?";
       params.push(Number(req.query.maxPrice));
+      countParams.push(Number(req.query.maxPrice));
     }
 
     if (req.query.search) {
       const words = req.query.search.trim().split(/\s+/);
       words.forEach(word => {
         const term = `%${word}%`;
-        query += " AND (title LIKE ? OR brand LIKE ? OR description LIKE ? OR CAST(year AS CHAR) LIKE ? OR fuel_type LIKE ? OR transmission LIKE ?)";
+        const clause = " AND (title LIKE ? OR brand LIKE ? OR description LIKE ? OR CAST(year AS CHAR) LIKE ? OR fuel_type LIKE ? OR transmission LIKE ?)";
+        baseQuery += clause;
+        countQuery += clause;
         params.push(term, term, term, term, term, term);
+        countParams.push(term, term, term, term, term, term);
       });
     }
 
     if (req.query.status) {
-      query += " AND status = ?";
+      baseQuery += " AND status = ?";
+      countQuery += " AND status = ?";
       params.push(req.query.status);
+      countParams.push(req.query.status);
     }
 
-    query += " ORDER BY created_at DESC";
+    baseQuery += " ORDER BY created_at DESC";
 
+    // Pagination mode: when "page" param is provided
+    if (req.query.page) {
+      const page = Math.max(1, Number(req.query.page));
+      const limit = Number(req.query.limit) || 6;
+      const offset = (page - 1) * limit;
+
+      baseQuery += " LIMIT ? OFFSET ?";
+      params.push(limit, offset);
+
+      const [[countResult], [cars]] = await Promise.all([
+        db.query(countQuery, countParams),
+        db.query(baseQuery, params),
+      ]);
+
+      const total = countResult[0].total;
+      return res.json({ cars, total, page, totalPages: Math.ceil(total / limit) });
+    }
+
+    // Non-paginated mode (backward compatible for admin, home page, etc.)
     if (req.query.limit) {
-      query += " LIMIT ?";
+      baseQuery += " LIMIT ?";
       params.push(Number(req.query.limit));
       if (req.query.offset) {
-        query += " OFFSET ?";
+        baseQuery += " OFFSET ?";
         params.push(Number(req.query.offset));
       }
     }
 
-    const [cars] = await db.query(query, params);
+    const [cars] = await db.query(baseQuery, params);
     res.json(cars);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
-};
+}
 
 exports.getCarById = async (req, res) => {
   try {

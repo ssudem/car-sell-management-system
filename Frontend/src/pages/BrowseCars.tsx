@@ -3,14 +3,14 @@
 // Users select filters first, then click "Search" button to apply them.
 
 import { useState, useMemo, useEffect } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CarCard from "@/components/CarCard";
 import axios from "axios";
 import type { Car } from "@/types/car";
 import { API_URL } from "@/config/api";
 
-const ALL_BRANDS = ["Toyota", "Honda", "BMW", "Mercedes", "Lamborghini","Ford", "Chevrolet", "Audi", "Hyundai", "Nissan", "Kia"];
+const ALL_BRANDS = ["Toyota", "Honda", "BMW", "Mercedes", "Lamborghini", "Ford", "Chevrolet", "Audi", "Hyundai", "Nissan", "Kia"];
 const FUEL_TYPES = ["Petrol", "Diesel", "Electric"];
 
 const BrowseCars = () => {
@@ -50,10 +50,14 @@ const BrowseCars = () => {
     setAppliedBrands([]);
     setAppliedFuels([]);
     setAppliedMaxPrice(100000);
+    setCurrentPage(1);
   };
 
   const [filteredCars, setFilteredCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const CARS_PER_PAGE = 6;
 
   // ----- Apply Filters (called on Search button click) -----
   const applyFilters = () => {
@@ -75,9 +79,12 @@ const BrowseCars = () => {
         if (appliedMaxPrice < 100000) params.append("maxPrice", appliedMaxPrice.toString());
 
         params.append("status", "Available");
+        params.append("page", currentPage.toString());
+        params.append("limit", CARS_PER_PAGE.toString());
 
         const response = await axios.get(`${API_URL}/cars?${params}`);
-        setFilteredCars(response.data);
+        setFilteredCars(response.data.cars);
+        setTotalPages(response.data.totalPages);
       } catch (error) {
         console.error("Error fetching cars:", error);
       } finally {
@@ -86,6 +93,11 @@ const BrowseCars = () => {
     };
 
     fetchCars();
+  }, [appliedSearch, appliedBrands, appliedFuels, appliedMaxPrice, currentPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
   }, [appliedSearch, appliedBrands, appliedFuels, appliedMaxPrice]);
 
   // The active filter count (for badge display)
@@ -249,6 +261,41 @@ const BrowseCars = () => {
               <p className="text-sm text-muted-foreground">Try adjusting your filters and clicking Search</p>
               <Button variant="outline" size="sm" onClick={clearFilters} className="mt-4">
                 Clear Filters
+              </Button>
+            </div>
+          )}
+
+          {/* ---- Pagination ---- */}
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => p - 1)}
+                className="gap-1"
+              >
+                <ChevronLeft className="h-4 w-4" /> Prev
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <Button
+                  key={page}
+                  variant={page === currentPage ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentPage(page)}
+                  className={page === currentPage ? "bg-accent text-accent-foreground" : ""}
+                >
+                  {page}
+                </Button>
+              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(p => p + 1)}
+                className="gap-1"
+              >
+                Next <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           )}
