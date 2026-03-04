@@ -11,7 +11,7 @@ import type { Car } from "@/types/car";
 import { API_URL } from "@/config/api";
 
 const ALL_BRANDS = ["Toyota", "Honda", "BMW", "Mercedes", "Lamborghini", "Ford", "Chevrolet", "Audi", "Hyundai", "Nissan", "Kia"];
-const FUEL_TYPES = ["Petrol", "Diesel", "Electric"];
+const FUEL_TYPES = ["Petrol", "Diesel", "Electric", "Hybrid"];
 
 const BrowseCars = () => {
   // ----- Filter State (pending — not yet applied) -----

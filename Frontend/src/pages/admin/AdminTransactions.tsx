@@ -67,7 +67,7 @@ const AdminTransactions = () => {
                   <td className="px-4 py-3 font-medium text-foreground">{p.car_title || p.carTitle}</td>
                   <td className="px-4 py-3 text-foreground">{p.buyer_name || p.buyerName || "—"}</td>
                   <td className="px-4 py-3 font-bold text-accent">${(p.amount || p.price)?.toLocaleString()}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{p.created_at ? new Date(p.created_at).toLocaleDateString() : p.date}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{p.created_at ? new Date(p.created_at).toLocaleDateString("en-GB") : p.date}</td>
                   <td className="px-4 py-3">
                     <span className="rounded-full bg-status-available/10 px-2.5 py-1 text-xs font-semibold text-status-available">
                       {p.payment_status || p.paymentStatus}

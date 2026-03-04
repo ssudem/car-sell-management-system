@@ -128,7 +128,7 @@ const AdminDashboard = () => {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-foreground">{activity.description}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{new Date(activity.created_at).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{new Date(activity.created_at).toLocaleDateString("en-GB")}</td>
                 </tr>
               ))}
             </tbody>

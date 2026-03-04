@@ -150,7 +150,7 @@ const UserDashboard = () => {
                   <tr key={inq.id} className="border-t">
                     <td className="px-4 py-3 font-medium text-foreground">{inq.car_title || inq.carTitle}</td>
                     <td className="max-w-xs truncate px-4 py-3 text-muted-foreground">{inq.message}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{inq.created_at ? new Date(inq.created_at).toLocaleDateString() : inq.date}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{inq.created_at ? new Date(inq.created_at).toLocaleDateString("en-GB") : inq.date}</td>
                     <td className="px-4 py-3">
                       <span
                         className={`rounded-full px-2.5 py-1 text-xs font-semibold ${(inq.status === "Replied")
@@ -191,7 +191,7 @@ const UserDashboard = () => {
                   <tr key={p.id} className="border-t">
                     <td className="px-4 py-3 font-medium text-foreground">{p.car_title || p.carTitle}</td>
                     <td className="px-4 py-3 font-bold text-accent">${(p.amount || p.price)?.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{p.created_at ? new Date(p.created_at).toLocaleDateString() : p.date}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{p.created_at ? new Date(p.created_at).toLocaleDateString("en-GB") : p.date}</td>
                     <td className="px-4 py-3">
                       <span className="rounded-full bg-status-available/10 px-2.5 py-1 text-xs font-semibold text-status-available">
                         {p.payment_status || p.paymentStatus}

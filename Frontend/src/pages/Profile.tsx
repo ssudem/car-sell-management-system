@@ -138,7 +138,7 @@ const Profile = () => {
               <h1 className="font-heading text-2xl font-bold text-foreground">{user.name}</h1>
               <p className="text-sm text-muted-foreground">{user.email}</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Member since {user.created_at ? new Date(user.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long" }) : "N/A"}
+                Member since {user.created_at ? new Date(user.created_at).toLocaleDateString("en-GB", { year: "numeric", month: "long" }) : "N/A"}
               </p>
               <span className="mt-2 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent capitalize">{user.role}</span>
             </div>
@@ -195,7 +195,7 @@ const Profile = () => {
               <Calendar className="mt-0.5 h-5 w-5 text-accent" />
               <div>
                 <p className="text-xs font-medium text-muted-foreground">Member Since</p>
-                <p className="text-sm font-medium text-foreground">{user.created_at ? new Date(user.created_at).toLocaleDateString() : "N/A"}</p>
+                <p className="text-sm font-medium text-foreground">{user.created_at ? new Date(user.created_at).toLocaleDateString("en-GB") : "N/A"}</p>
               </div>
             </div>
           </div>
