@@ -78,7 +78,7 @@ const BrowseCars = () => {
         appliedFuels.forEach(f => params.append("fuelType", f));
         if (appliedMaxPrice < 100000) params.append("maxPrice", appliedMaxPrice.toString());
 
-        params.append("status", "Available");
+        params.append("status", "Available"); //if i want both -> params.set("status", ["Available","Sold"].join(","));
         params.append("page", currentPage.toString());
         params.append("limit", CARS_PER_PAGE.toString());
 
