@@ -104,6 +104,21 @@ npm run dev
 ```bash
 cd Frontend
 npm install
+```
+
+Create a `.env` file (use `.env.example` as template):
+```bash
+cp .env.example .env
+# Edit .env with your API URL
+```
+
+Frontend `.env` variables:
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Start the frontend:
+```bash
 npm run dev
 ```
 > Frontend runs on `http://localhost:8080`
@@ -126,6 +141,8 @@ npm run dev
 | `CLOUDINARY_API_KEY` | Cloudinary API key |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret |
 | `FRONTEND_URL` | Frontend URL for CORS (e.g., `http://localhost:8080`) |
+| **Frontend** | |
+| `VITE_API_URL` | Backend API URL (e.g., `http://localhost:5000/api`) |
 
 ---
 
