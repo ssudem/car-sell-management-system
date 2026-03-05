@@ -76,7 +76,7 @@ const CarDetails = () => {
   }
 
   // Gallery images — use the images[] array from mock data
-  // In Phase 2, these come from Cloudinary URLs stored in the database
+  // these come from Cloudinary URLs stored in the database
   const galleryImages = car.image
     ? [car.image, ...(car.images || []).filter((img) => img !== car.image)]
     : car.images && car.images.length > 0 ? car.images : [];
@@ -156,7 +156,7 @@ const CarDetails = () => {
     { label: "Brand", value: car.brand, icon: Settings },
     { label: "Year", value: car.year, icon: Calendar },
     { label: "Mileage", value: `${car.mileage.toLocaleString()} km`, icon: Gauge },
-    { label: "Fuel Type", value: car.fuelType, icon: Fuel },
+    { label: "Fuel Type", value: car.fuel_type, icon: Fuel },
     { label: "Transmission", value: car.transmission, icon: Settings },
     { label: "Status", value: car.status, icon: Settings },
   ];

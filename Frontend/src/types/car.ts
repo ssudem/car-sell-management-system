@@ -5,7 +5,7 @@ export interface Car {
     price: number;
     year: number;
     mileage: number;
-    fuelType: string;
+    fuel_type: string;
     transmission: string;
     condition: string;
     status: "Available" | "Pending" | "Sold";
