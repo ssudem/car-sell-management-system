@@ -7,6 +7,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Car, Menu, X, User, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -61,8 +62,9 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* ---- Auth / User Section (Desktop) ---- */}
+        {/* ---- Theme Toggle + Auth / User Section (Desktop) ---- */}
         <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           {loggedIn && user ? (
             // --- LOGGED IN: Show avatar dropdown ---
             <div className="relative">
@@ -155,6 +157,10 @@ const Navbar = () => {
       {/* ---- Mobile Menu Dropdown ---- */}
       {mobileOpen && (
         <div className="border-t bg-card px-4 pb-4 md:hidden">
+          <div className="flex items-center justify-between py-2">
+            <span className="text-sm font-medium text-muted-foreground">Theme</span>
+            <ThemeToggle />
+          </div>
           <Link
             to="/"
             onClick={() => setMobileOpen(false)}

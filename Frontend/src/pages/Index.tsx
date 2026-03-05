@@ -43,17 +43,17 @@ const Index = () => {
         {/* Background image */}
         <div className="absolute inset-0">
           <img src={heroBg} alt="Luxury car" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/40 dark:from-background/90 dark:via-background/70 dark:to-background/40" />
         </div>
 
         {/* Hero content */}
         <div className="container relative z-10 mx-auto px-4 py-20">
           <div className="max-w-xl">
-            <h1 className="font-heading text-4xl font-bold leading-tight text-primary-foreground md:text-5xl">
+            <h1 className="font-heading text-4xl font-bold leading-tight text-primary-foreground dark:text-white md:text-5xl">
               Find Your Perfect
               <span className="block text-accent">Dream Car</span>
             </h1>
-            <p className="mt-4 text-lg text-primary-foreground/80">
+            <p className="mt-4 text-lg text-primary-foreground/80 dark:text-white">
               Browse thousands of verified used cars. Trusted sellers, transparent pricing, hassle-free buying.
             </p>
 

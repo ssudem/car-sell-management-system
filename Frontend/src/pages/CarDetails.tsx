@@ -176,7 +176,7 @@ const CarDetails = () => {
             <img
               src={galleryImages[selectedImageIndex]}
               alt={`${car.title} - Image ${selectedImageIndex + 1}`}
-              className="mx-auto h-auto max-h-[480px] w-full object-contain transition-all duration-300"
+              className="mx-auto h-auto max-h-[480px] w-full rounded-lg border object-contain transition-all duration-300"
             />
           </div>
 

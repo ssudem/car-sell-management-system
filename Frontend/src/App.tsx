@@ -16,6 +16,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 
 // Layouts
@@ -64,43 +65,45 @@ const AdminRoute = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* ===== Public Routes ===== */}
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/browse" element={<BrowseCars />} />
-            <Route path="/car/:id" element={<CarDetails />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+  <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* ===== Public Routes ===== */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/browse" element={<BrowseCars />} />
+              <Route path="/car/:id" element={<CarDetails />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-            {/* Protected User Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<UserDashboard />} />
-              <Route path="/profile" element={<Profile />} />
+              {/* Protected User Routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<UserDashboard />} />
+                <Route path="/profile" element={<Profile />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* ===== Admin Routes ===== */}
-          <Route path="/admin" element={<AdminRoute />}>
-            <Route element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="inventory" element={<ManageInventory />} />
-              <Route path="add-car" element={<AddCarForm />} />
-              <Route path="inquiries" element={<AdminInquiries />} />
-              <Route path="transactions" element={<AdminTransactions />} />
+            {/* ===== Admin Routes ===== */}
+            <Route path="/admin" element={<AdminRoute />}>
+              <Route element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="inventory" element={<ManageInventory />} />
+                <Route path="add-car" element={<AddCarForm />} />
+                <Route path="inquiries" element={<AdminInquiries />} />
+                <Route path="transactions" element={<AdminTransactions />} />
+              </Route>
             </Route>
-          </Route>
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;
