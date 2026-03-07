@@ -9,6 +9,7 @@ import {
   PlusCircle,
   MessageSquare,
   Receipt,
+  Users,
   Menu,
   X,
   ArrowLeft,
@@ -20,6 +21,7 @@ const adminLinks = [
   { to: "/admin/add-car", label: "Add New Car", icon: PlusCircle },
   { to: "/admin/inquiries", label: "View Inquiries", icon: MessageSquare },
   { to: "/admin/transactions", label: "Transactions", icon: Receipt },
+  { to: "/admin/users", label: "Manage Users", icon: Users },
 ];
 
 const AdminLayout = () => {
@@ -43,11 +45,10 @@ const AdminLayout = () => {
             key={link.to}
             to={link.to}
             onClick={() => setSidebarOpen(false)}
-            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-              isActive(link.to)
+            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isActive(link.to)
                 ? "bg-sidebar-primary text-sidebar-primary-foreground"
                 : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            }`}
+              }`}
           >
             <link.icon className="h-4 w-4" />
             {link.label}

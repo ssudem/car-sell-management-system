@@ -136,6 +136,22 @@ Also has Gmail compose link: opens `mail.google.com` with pre-filled recipient, 
 
 ---
 
+### `ManageUsers.tsx`
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/api/admin/users` | ✅ Admin | Fetch all users (excludes passwords) |
+| DELETE | `/api/admin/users/:id` | ✅ Admin | Delete a user (non-admin only) |
+| PATCH | `/api/admin/users/:id/promote` | ✅ Admin | Promote user to admin role |
+| PATCH | `/api/admin/users/:id/password` | ✅ Admin | Update user password (verifies old password) |
+
+**Business rules:**
+- Cannot delete or demote admin users
+- Promoting a user to admin is irreversible from this panel
+- Password update requires the user's current password for verification
+- All actions are logged to `activity_log` table (types: `User Deleted`, `Role Promoted`, `Password Updated`)
+
+---
+
 ## 📁 Backend Route Files → Controllers
 
 | Route File | Base Path | Controller |

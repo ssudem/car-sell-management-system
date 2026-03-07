@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { User, Mail, Phone, MapPin, Calendar, Edit2, Save, ArrowLeft, Camera } from "lucide-react";
+import { User, Mail, Phone, MapPin, Calendar, Edit2, Save, ArrowLeft, Camera, KeyRound, Eye, EyeOff, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { API_URL, getAuthHeaders, getMultipartHeaders } from "@/config/api";
@@ -23,6 +23,16 @@ const Profile = () => {
   const [editPhone, setEditPhone] = useState("");
   const [editAddress, setEditAddress] = useState("");
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  // Password change state
+  const [showPasswordSection, setShowPasswordSection] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showOld, setShowOld] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -103,6 +113,34 @@ const Profile = () => {
       toast.error(err.response?.data?.message || "Failed to upload avatar");
     } finally {
       setUploadingAvatar(false);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      toast.error("All password fields are required");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error("New password must be at least 6 characters");
+      return;
+    }
+    setPasswordLoading(true);
+    try {
+      await axios.put(`${API_URL}/users/me/password`, { oldPassword, newPassword }, { headers: getAuthHeaders() });
+      toast.success("Password changed successfully!");
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setShowPasswordSection(false);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to change password");
+    } finally {
+      setPasswordLoading(false);
     }
   };
 
@@ -199,6 +237,117 @@ const Profile = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* ---- Change Password Section ---- */}
+        <div className="mt-6 rounded-lg border bg-card p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="font-heading text-lg font-semibold text-foreground">Change Password</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1"
+              onClick={() => {
+                setShowPasswordSection(!showPasswordSection);
+                if (showPasswordSection) {
+                  setOldPassword("");
+                  setNewPassword("");
+                  setConfirmPassword("");
+                }
+              }}
+            >
+              <KeyRound className="h-3.5 w-3.5" />
+              {showPasswordSection ? "Cancel" : "Change Password"}
+            </Button>
+          </div>
+
+          {showPasswordSection && (
+            <div className="mt-4 space-y-4">
+              {/* Old Password */}
+              <div className="flex items-start gap-3">
+                <Lock className="mt-2.5 h-5 w-5 text-accent" />
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-muted-foreground">Current Password</p>
+                  <div className="relative mt-1">
+                    <input
+                      type={showOld ? "text" : "password"}
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder="Enter current password"
+                      className="w-full rounded-lg border bg-background px-3 py-2 pr-10 text-sm text-foreground outline-none focus:ring-2 focus:ring-accent"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowOld(!showOld)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showOld ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div className="flex items-start gap-3">
+                <KeyRound className="mt-2.5 h-5 w-5 text-accent" />
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-muted-foreground">New Password</p>
+                  <div className="relative mt-1">
+                    <input
+                      type={showNew ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter new password"
+                      className="w-full rounded-lg border bg-background px-3 py-2 pr-10 text-sm text-foreground outline-none focus:ring-2 focus:ring-accent"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNew(!showNew)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Confirm New Password */}
+              <div className="flex items-start gap-3">
+                <KeyRound className="mt-2.5 h-5 w-5 text-accent" />
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-muted-foreground">Confirm New Password</p>
+                  <div className="relative mt-1">
+                    <input
+                      type={showConfirm ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      className="w-full rounded-lg border bg-background px-3 py-2 pr-10 text-sm text-foreground outline-none focus:ring-2 focus:ring-accent"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirm(!showConfirm)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Save Password Button */}
+              <div className="flex justify-end pt-2">
+                <Button
+                  onClick={handlePasswordChange}
+                  disabled={passwordLoading || !oldPassword || !newPassword || !confirmPassword}
+                  className="gap-1 bg-accent hover:bg-accent/90"
+                >
+                  <Save className="h-3.5 w-3.5" />
+                  {passwordLoading ? "Updating..." : "Update Password"}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

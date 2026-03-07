@@ -39,6 +39,7 @@ import ManageInventory from "./pages/admin/ManageInventory";
 import AddCarForm from "./pages/admin/AddCarForm";
 import AdminInquiries from "./pages/admin/AdminInquiries";
 import AdminTransactions from "./pages/admin/AdminTransactions";
+import ManageUsers from "./pages/admin/ManageUsers";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +96,7 @@ const App = () => (
                 <Route path="add-car" element={<AddCarForm />} />
                 <Route path="inquiries" element={<AdminInquiries />} />
                 <Route path="transactions" element={<AdminTransactions />} />
+                <Route path="users" element={<ManageUsers />} />
               </Route>
             </Route>
 

@@ -70,6 +70,9 @@ const AdminDashboard = () => {
       case "Car Deleted": return "bg-red-500/10 text-red-600";
       case "Car Updated": return "bg-amber-500/10 text-amber-600";
       case "Inquiry Replied": return "bg-cyan-500/10 text-cyan-600";
+      case "User Deleted": return "bg-red-500/10 text-red-600";
+      case "Role Promoted": return "bg-indigo-500/10 text-indigo-600";
+      case "Password Updated": return "bg-amber-500/10 text-amber-600";
       default: return "bg-accent/10 text-accent";
     }
   };

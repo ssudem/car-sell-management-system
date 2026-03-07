@@ -21,6 +21,7 @@ A full-stack car selling platform where admins manage car inventory and users br
 - **Manage Inventory** — Add/Edit/Delete cars with image upload, brand dropdown, status management
 - **Inquiries** — View all inquiries, reply via Gmail (opens compose in new tab), mark as replied
 - **Transactions** — View all completed purchases with buyer details
+- **Manage Users** — View all users, delete non-admin users, promote users to admin role (changes logged to activity feed)
 
 ---
 
@@ -54,7 +55,7 @@ CarSellSystem/
 │   ├── src/
 │   │   ├── components/   # Navbar, CarCard, UI components
 │   │   ├── pages/        # All page components (Browse, CarDetails, Login, Register, Profile, Dashboard)
-│   │   │   └── admin/    # Admin pages (Dashboard, ManageInventory, AddCarForm, Inquiries, Transactions)
+│   │   │   └── admin/    # Admin pages (Dashboard, ManageInventory, AddCarForm, Inquiries, Transactions, ManageUsers)
 │   │   ├── config/       # API URL and auth header helpers
 │   │   └── types/        # TypeScript interfaces
 │   ├── package.json
@@ -157,6 +158,10 @@ npm run dev
 | DELETE | `/api/wishlist/:carId` | User | Remove from wishlist |
 | GET | `/api/admin/stats` | Admin | Dashboard stats |
 | GET | `/api/admin/activity` | Admin | Recent activity feed |
+| GET | `/api/admin/users` | Admin | List all users |
+| DELETE | `/api/admin/users/:id` | Admin | Delete user (non-admin only) |
+| PATCH | `/api/admin/users/:id/promote` | Admin | Promote user to admin |
+| PATCH | `/api/admin/users/:id/password` | Admin | Update user password (verify old) |
 
 ---
 
