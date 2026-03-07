@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import axios from "axios";
 import { API_URL, getAuthHeaders, getMultipartHeaders } from "@/config/api";
 
+import {ALL_BRANDS,FUEL_TYPES} from "../../config/CarBrands.tsx";
+
 const AddCarForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -166,7 +168,7 @@ const AddCarForm = () => {
                 className="w-full rounded-lg border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-accent"
               >
                 <option value="">Select Brand</option>
-                {["Toyota", "Honda", "BMW", "Mercedes", "Lamborghini", "Ford", "Chevrolet", "Audi", "Hyundai", "Nissan", "Kia"].map((b) => (
+                {ALL_BRANDS.map((b) => (
                   <option key={b} value={b}>{b}</option>
                 ))}
               </select>
@@ -215,10 +217,13 @@ const AddCarForm = () => {
                 onChange={handleChange}
                 className="w-full rounded-lg border bg-background px-4 py-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-accent"
               >
-                <option>Petrol</option>
+                {/* <option>Petrol</option>
                 <option>Diesel</option>
                 <option>Electric</option>
-                <option>Hybrid</option>
+                <option>Hybrid</option> */}
+                {FUEL_TYPES.map((b) => (
+                  <option key={b} value={b}>{b}</option>
+                ))}
               </select>
             </div>
             <div>

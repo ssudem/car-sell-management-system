@@ -17,7 +17,8 @@ import { API_URL } from "@/config/api";
 import axios from "axios";
 import type { Car } from "@/types/car";
 
-const Index = () => {
+// const Index = () => {
+function Index(){
   const [searchQuery, setSearchQuery] = useState("");
   const [featuredCars, setFeaturedCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);

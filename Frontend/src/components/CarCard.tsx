@@ -68,7 +68,7 @@ const CarCard = ({ car }: CarCardProps) => {
           </span>
           <span className="flex items-center gap-1">
             <Fuel className="h-3.5 w-3.5" />
-            {car.fuelType}
+            {car.fuel_type}
           </span>
         </div>
       </div>
