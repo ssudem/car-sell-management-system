@@ -49,7 +49,7 @@ exports.getActivity = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
   try {
     const [users] = await db.query(
-      "SELECT id, name, email, phone, avatar, role, created_at FROM users ORDER BY created_at DESC"
+      "SELECT id, name, email, phone, avatar, role, created_at FROM users ORDER BY created_at DESC",
     );
     res.json(users);
   } catch (err) {
@@ -60,9 +60,14 @@ exports.getAllUsers = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
-    const [rows] = await db.query("SELECT id, name, role FROM users WHERE id = ?", [id]);
-    if (rows.length === 0) return res.status(404).json({ message: "User not found" });
-    if (rows[0].role === "admin") return res.status(403).json({ message: "Cannot delete an admin user" });
+    const [rows] = await db.query(
+      "SELECT id, name, role FROM users WHERE id = ?",
+      [id],
+    );
+    if (rows.length === 0)
+      return res.status(404).json({ message: "User not found" });
+    if (rows[0].role === "admin")
+      return res.status(403).json({ message: "Cannot delete an admin user" });
 
     const userName = rows[0].name;
     await db.query("DELETE FROM users WHERE id = ?", [id]);
@@ -70,7 +75,7 @@ exports.deleteUser = async (req, res) => {
     // Log activity
     await db.query(
       "INSERT INTO activity_log (type, description) VALUES (?, ?)",
-      ["User Deleted", `User "${userName}" was deleted by admin`]
+      ["User Deleted", `User "${userName}" was deleted by admin`],
     );
 
     res.json({ message: "User deleted successfully" });
@@ -82,9 +87,14 @@ exports.deleteUser = async (req, res) => {
 exports.promoteUser = async (req, res) => {
   const { id } = req.params;
   try {
-    const [rows] = await db.query("SELECT id, name, role FROM users WHERE id = ?", [id]);
-    if (rows.length === 0) return res.status(404).json({ message: "User not found" });
-    if (rows[0].role === "admin") return res.status(400).json({ message: "User is already an admin" });
+    const [rows] = await db.query(
+      "SELECT id, name, role FROM users WHERE id = ?",
+      [id],
+    );
+    if (rows.length === 0)
+      return res.status(404).json({ message: "User not found" });
+    if (rows[0].role === "admin")
+      return res.status(400).json({ message: "User is already an admin" });
 
     const userName = rows[0].name;
     await db.query("UPDATE users SET role = 'admin' WHERE id = ?", [id]);
@@ -92,7 +102,7 @@ exports.promoteUser = async (req, res) => {
     // Log activity
     await db.query(
       "INSERT INTO activity_log (type, description) VALUES (?, ?)",
-      ["Role Promoted", `User "${userName}" was promoted to admin`]
+      ["Role Promoted", `User "${userName}" was promoted to admin`],
     );
 
     res.json({ message: "User promoted to admin successfully" });
@@ -106,26 +116,42 @@ exports.updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
   if (!oldPassword || !newPassword) {
-    return res.status(400).json({ message: "Both old and new passwords are required" });
+    return res
+      .status(400)
+      .json({ message: "Both old and new passwords are required" });
   }
 
   try {
-    const [rows] = await db.query("SELECT id, name, password FROM users WHERE id = ?", [id]);
-    if (rows.length === 0) return res.status(404).json({ message: "User not found" });
+    const [rows] = await db.query(
+      "SELECT id, name, password FROM users WHERE id = ?",
+      [id],
+    );
+    if (rows.length === 0)
+      return res.status(404).json({ message: "User not found" });
 
     // Verify old password
     const isMatch = await bcrypt.compare(oldPassword, rows[0].password);
-    if (!isMatch) return res.status(400).json({ message: "Old password is incorrect" });
+    if (!isMatch)
+      return res.status(400).json({ message: "Old password is incorrect" });
 
     // Hash and update new password
     const hashed = await bcrypt.hash(newPassword, 10);
     await db.query("UPDATE users SET password = ? WHERE id = ?", [hashed, id]);
 
+    // Get admin name for logging
+    const [adminRows] = await db.query("SELECT name FROM users WHERE id = ?", [
+      req.user.id,
+    ]);
+    const adminName = adminRows[0].name;
+
     // Log activity
     const userName = rows[0].name;
     await db.query(
       "INSERT INTO activity_log (type, description) VALUES (?, ?)",
-      ["Password Updated", `Password updated for user "${userName}" by admin`]
+      [
+        "Password Updated",
+        `Password updated for user "${userName}" by "${adminName}"`,
+      ],
     );
 
     res.json({ message: "Password updated successfully" });

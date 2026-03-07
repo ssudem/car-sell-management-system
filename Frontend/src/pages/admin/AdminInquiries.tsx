@@ -79,15 +79,23 @@ const AdminInquiries = () => {
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <a
-                    href={`https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(inq.email)}&su=${encodeURIComponent(`Re: Inquiry about ${inq.carTitle}`)}&body=${encodeURIComponent(`Hi ${inq.name},\n\nThank you for your inquiry about ${inq.carTitle}.\n\n`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button variant="outline" size="sm" className="gap-1">
-                      <ExternalLink className="h-3.5 w-3.5" /> Email
-                    </Button>
-                  </a>
+                  {(() => {
+                    const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
+                    const emailHref = isMobile
+                      ? `mailto:${inq.email}?subject=${encodeURIComponent(`Re: Inquiry about ${inq.carTitle}`)}&body=${encodeURIComponent(`Hi ${inq.name},\n\nThank you for your inquiry about ${inq.carTitle}.\n\n`)}`
+                      : `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(inq.email)}&su=${encodeURIComponent(`Re: Inquiry about ${inq.carTitle}`)}&body=${encodeURIComponent(`Hi ${inq.name},\n\nThank you for your inquiry about ${inq.carTitle}.\n\n`)}`;
+                    return (
+                      <a
+                        href={emailHref}
+                        target={isMobile ? "_self" : "_blank"}
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="outline" size="sm" className="gap-1">
+                          <ExternalLink className="h-3.5 w-3.5" /> Email
+                        </Button>
+                      </a>
+                    );
+                  })()}
                   {inq.status !== "Replied" && (
                     <Button
                       variant="outline"
