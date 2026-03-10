@@ -85,10 +85,17 @@ const BrowseCars = () => {
         params.append("limit", CARS_PER_PAGE.toString());
 
         const response = await axios.get(`${API_URL}/cars?${params}`);
-        setFilteredCars(response.data.cars);
-        setTotalPages(response.data.totalPages);
+        // Ensure the response data is properly structured
+        const cars = Array.isArray(response.data?.cars) ? response.data.cars :
+                    Array.isArray(response.data) ? response.data : [];
+        const totalPages = response.data?.totalPages || 1;
+
+        setFilteredCars(cars);
+        setTotalPages(totalPages);
       } catch (error) {
         console.error("Error fetching cars:", error);
+        setFilteredCars([]); // Set to empty array on error
+        setTotalPages(1);
       } finally {
         setLoading(false);
       }

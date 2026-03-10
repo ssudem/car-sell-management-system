@@ -27,9 +27,12 @@ function Index(){
     const fetchFeatured = async () => {
       try {
         const res = await axios.get(`${API_URL}/cars?status=Available&limit=4`);
-        setFeaturedCars(res.data);
+        // Ensure the response data is an array
+        const cars = Array.isArray(res.data) ? res.data : res.data?.cars || res.data?.data || [];
+        setFeaturedCars(cars);
       } catch (e) {
         console.error("Failed to load featured cars");
+        setFeaturedCars([]); // Set to empty array on error
       } finally {
         setLoading(false);
       }
@@ -122,11 +125,22 @@ function Index(){
 
         {/* Cars Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {featuredCars.map((car, index) => (
-            <div key={car.id} className="animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
-              <CarCard car={car} />
-            </div>
-          ))}
+          {loading ? (
+            // Loading skeleton
+            Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="animate-pulse">
+                <div className="h-48 bg-muted rounded-lg mb-4"></div>
+                <div className="h-4 bg-muted rounded mb-2"></div>
+                <div className="h-4 bg-muted rounded w-3/4"></div>
+              </div>
+            ))
+          ) : (
+            featuredCars.map((car, index) => (
+              <div key={car.id} className="animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
+                <CarCard car={car} />
+              </div>
+            ))
+          )}
         </div>
 
         {/* Mobile CTA */}
