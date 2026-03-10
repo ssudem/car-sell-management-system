@@ -1,7 +1,7 @@
 -- ===== SELECT DATABASE =====
 -- Note: Free SQL hosts generally do not allow creating a database.
 -- We will just select the pre-created database provided to us.
-USE sql12818604;
+USE <DATA_BASE_NAME>;
 
 -- ===== USERS TABLE =====
 CREATE TABLE IF NOT EXISTS users (
