@@ -22,6 +22,7 @@ const BrowseCars = () => {
   const [selectedFuels, setSelectedFuels] = useState<string[]>([]);
   const [maxPrice, setMaxPrice] = useState(100000);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [showAllBrands, setShowAllBrands] = useState(false);
 
   // ----- Applied Filter State (used for actual filtering) -----
   const [appliedSearch, setAppliedSearch] = useState("");
@@ -114,13 +115,16 @@ const BrowseCars = () => {
     selectedBrands.length + selectedFuels.length + (maxPrice < 100000 ? 1 : 0);
 
   // ----- Reusable Filter Panel -----
-  const FilterPanel = () => (
+  const FilterPanel = () => {
+    const displayedBrands = showAllBrands ? ALL_BRANDS : ALL_BRANDS.slice(0, 7);
+    
+    return (
     <div className="space-y-6">
       {/* Brand Filter */}
       <div>
         <h3 className="mb-3 font-heading text-sm font-semibold text-foreground">Brand</h3>
         <div className="space-y-2">
-          {ALL_BRANDS.map((brand) => (
+          {displayedBrands.map((brand) => (
             <label key={brand} className="flex cursor-pointer items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -132,6 +136,16 @@ const BrowseCars = () => {
             </label>
           ))}
         </div>
+        {ALL_BRANDS.length > 7 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowAllBrands(!showAllBrands)}
+            className="mt-2 h-auto p-1 text-xs text-accent hover:bg-transparent hover:text-accent/80"
+          >
+            {showAllBrands ? "View Less Brands" : "View More Brands"}
+          </Button>
+        )}
       </div>
 
       {/* Price Range */}
@@ -187,7 +201,8 @@ const BrowseCars = () => {
         </Button>
       )}
     </div>
-  );
+    );
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">

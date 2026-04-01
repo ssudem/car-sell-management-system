@@ -2,7 +2,7 @@
 // The top navigation bar visible on all public pages.
 // Contains: Logo, nav links, and Login/Register buttons (or user avatar if logged in).
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Car, Menu, X, User, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,9 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileDropdown, setProfileDropdown] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuOpenTimeRef = useRef<number>(0);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -19,6 +22,46 @@ const Navbar = () => {
   const token = localStorage.getItem("token");
   const user = token ? JSON.parse(localStorage.getItem("user") || "null") : null;
   const loggedIn = !!token && !!user;
+
+  // Close mobile menu on scroll (with delay to prevent immediate closing after opening)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (mobileOpen) {
+        // Don't close if menu was just opened (within 300ms)
+        const timeSinceOpen = Date.now() - menuOpenTimeRef.current;
+        if (timeSinceOpen > 300) {
+          setMobileOpen(false);
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mobileOpen]);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      // Don't close if clicking on the menu toggle button or inside the menu
+      if (
+        (menuRef.current && menuRef.current.contains(target)) ||
+        (menuButtonRef.current && menuButtonRef.current.contains(target))
+      ) {
+        return;
+      }
+      setMobileOpen(false);
+    };
+
+    if (mobileOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener("touchstart", handleClickOutside);
+      };
+    }
+  }, [mobileOpen]);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -147,7 +190,14 @@ const Navbar = () => {
 
         {/* ---- Mobile Menu Toggle ---- */}
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
+          ref={menuButtonRef}
+          onClick={() => {
+            setMobileOpen(!mobileOpen);
+            // Record when menu is opened
+            if (!mobileOpen) {
+              menuOpenTimeRef.current = Date.now();
+            }
+          }}
           className="rounded-md p-2 text-foreground md:hidden"
         >
           {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -156,7 +206,7 @@ const Navbar = () => {
 
       {/* ---- Mobile Menu Dropdown ---- */}
       {mobileOpen && (
-        <div className="border-t bg-card px-4 pb-4 md:hidden">
+        <div ref={menuRef} className="border-t bg-card px-4 pb-4 md:hidden">
           <div className="flex items-center justify-between py-2">
             <span className="text-sm font-medium text-muted-foreground">Theme</span>
             <ThemeToggle />
