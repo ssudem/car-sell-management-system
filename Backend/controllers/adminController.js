@@ -1,6 +1,7 @@
 const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 
+// Numbers Count :-
 exports.getStats = async (req, res) => {
   try {
     const query = `
