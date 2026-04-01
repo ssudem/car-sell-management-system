@@ -2,7 +2,7 @@
 // Left sidebar with filters + main grid of CarCards.
 // Users select filters first, then click "Search" button to apply them.
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CarCard from "@/components/CarCard";
@@ -22,13 +22,16 @@ const BrowseCars = () => {
   const [selectedFuels, setSelectedFuels] = useState<string[]>([]);
   const [maxPrice, setMaxPrice] = useState(100000);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [showAllBrands, setShowAllBrands] = useState(false);
 
   // ----- Applied Filter State (used for actual filtering) -----
   const [appliedSearch, setAppliedSearch] = useState("");
   const [appliedBrands, setAppliedBrands] = useState<string[]>([]);
   const [appliedFuels, setAppliedFuels] = useState<string[]>([]);
   const [appliedMaxPrice, setAppliedMaxPrice] = useState(100000);
+
+  // ----- Refs for preserving scroll position -----
+  const brandsScrollRef = useRef<HTMLDivElement>(null);
+  const brandsScrollPositionRef = useRef<number>(0);
 
   // ----- Toggle helpers -----
   const toggleBrand = (brand: string) => {
@@ -110,42 +113,46 @@ const BrowseCars = () => {
     setCurrentPage(1);
   }, [appliedSearch, appliedBrands, appliedFuels, appliedMaxPrice]);
 
+  // Preserve scroll position in brands list
+  useEffect(() => {
+    // Restore scroll position after state update completes
+    if (brandsScrollRef.current) {
+      brandsScrollRef.current.scrollTop = brandsScrollPositionRef.current;
+    }
+  }, [selectedBrands]);
+
+  // Save scroll position before state change
+  const handleBrandChange = (brand: string) => {
+    if (brandsScrollRef.current) {
+      brandsScrollPositionRef.current = brandsScrollRef.current.scrollTop;
+    }
+    toggleBrand(brand);
+  };
+
   // The active filter count (for badge display)
   const activeFilterCount =
     selectedBrands.length + selectedFuels.length + (maxPrice < 100000 ? 1 : 0);
 
   // ----- Reusable Filter Panel -----
   const FilterPanel = () => {
-    const displayedBrands = showAllBrands ? ALL_BRANDS : ALL_BRANDS.slice(0, 7);
-    
     return (
     <div className="space-y-6">
       {/* Brand Filter */}
       <div>
         <h3 className="mb-3 font-heading text-sm font-semibold text-foreground">Brand</h3>
-        <div className="space-y-2">
-          {displayedBrands.map((brand) => (
+        <div ref={brandsScrollRef} className="space-y-2 max-h-60 overflow-y-auto rounded-md border border-border bg-card/50 p-2">
+          {ALL_BRANDS.map((brand) => (
             <label key={brand} className="flex cursor-pointer items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={selectedBrands.includes(brand)}
-                onChange={() => toggleBrand(brand)}
+                onChange={() => handleBrandChange(brand)}
                 className="h-4 w-4 rounded border-border text-accent accent-accent"
               />
               <span className="text-foreground">{brand}</span>
             </label>
           ))}
         </div>
-        {ALL_BRANDS.length > 7 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowAllBrands(!showAllBrands)}
-            className="mt-2 h-auto p-1 text-xs text-accent hover:bg-transparent hover:text-accent/80"
-          >
-            {showAllBrands ? "View Less Brands" : "View More Brands"}
-          </Button>
-        )}
       </div>
 
       {/* Price Range */}
