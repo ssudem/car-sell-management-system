@@ -14,11 +14,13 @@ exports.uploadImages = async (req, res) => {
         transformation: [{ width: 800, height: 600, crop: "fill" }],
       });
       urls.push(result.secure_url);
-      fs.unlinkSync(file.path); // Delete temp file after upload
     }
 
     res.json({ urls });
   } catch (err) {
     res.status(500).json({ message: "Upload failed", error: err.message });
+  } finally {
+    // Delete file always, whether upload succeeds or fails
+    fs.unlinkSync(file.path);
   }
 };
