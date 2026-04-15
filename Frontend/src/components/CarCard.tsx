@@ -18,6 +18,8 @@ const getStatusClasses = (status: Car["status"]) => {
   }
 };
 
+
+
 interface CarCardProps {
   car: Car;
 }

@@ -12,12 +12,28 @@ import { Link } from "react-router-dom";
 import { Search, ArrowRight, ShieldCheck, Truck, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CarCard from "@/components/CarCard";
-import heroBg from "@/assets/hero-bg.jpg";
+// import heroBg from "@/assets/hero-bg.jpg";
 import { API_URL } from "@/config/api";
 import axios from "axios";
 import type { Car } from "@/types/car";
 
 const heroVideo = "https://res.cloudinary.com/dbcovjgwo/video/upload/v1776230487/BMW_M3_Competition_-_4K_Cinematic_Short_Video_1440p_o5i0wi.mp4";
+
+// Placeholder Card Component
+const PlaceholderCard = () => (
+  <div className="rounded-lg border border-border bg-card overflow-hidden shadow-sm animate-pulse">
+    <div className="aspect-video bg-muted-foreground/20" />
+    <div className="p-4 space-y-3">
+      <div className="h-4 bg-muted-foreground/20 rounded w-3/4" />
+      <div className="h-3 bg-muted-foreground/20 rounded w-1/2" />
+      <div className="flex gap-2">
+        <div className="h-3 bg-muted-foreground/20 rounded flex-1" />
+        <div className="h-3 bg-muted-foreground/20 rounded flex-1" />
+      </div>
+      <div className="h-10 bg-muted-foreground/20 rounded mt-4" />
+    </div>
+  </div>
+);
 
 // const Index = () => {
 function Index(){
@@ -140,11 +156,7 @@ function Index(){
           {loading ? (
             // Loading skeleton
             Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="animate-pulse">
-                <div className="h-48 bg-muted rounded-lg mb-4"></div>
-                <div className="h-4 bg-muted rounded mb-2"></div>
-                <div className="h-4 bg-muted rounded w-3/4"></div>
-              </div>
+                <PlaceholderCard key={index} />
             ))
           ) : (
             featuredCars.map((car, index) => (

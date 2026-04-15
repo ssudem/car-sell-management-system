@@ -10,6 +10,22 @@ import axios from "axios";
 import type { Car } from "@/types/car";
 import { API_URL } from "@/config/api";
 
+// Placeholder Card Component
+const PlaceholderCard = () => (
+  <div className="rounded-lg border border-border bg-card overflow-hidden shadow-sm animate-pulse">
+    <div className="aspect-video bg-muted-foreground/20" />
+    <div className="p-4 space-y-3">
+      <div className="h-4 bg-muted-foreground/20 rounded w-3/4" />
+      <div className="h-3 bg-muted-foreground/20 rounded w-1/2" />
+      <div className="flex gap-2">
+        <div className="h-3 bg-muted-foreground/20 rounded flex-1" />
+        <div className="h-3 bg-muted-foreground/20 rounded flex-1" />
+      </div>
+      <div className="h-10 bg-muted-foreground/20 rounded mt-4" />
+    </div>
+  </div>
+);
+
 // const ALL_BRANDS = ["Toyota", "Honda", "BMW", "Mercedes", "Lamborghini", "Ford", "Chevrolet", "Audi", "Hyundai", "Nissan", "Kia"];
 // const FUEL_TYPES = ["Petrol", "Diesel", "Electric", "Hybrid"];
 
@@ -60,7 +76,7 @@ const BrowseCars = () => {
   };
 
   const [filteredCars, setFilteredCars] = useState<Car[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const CARS_PER_PAGE = 6;
@@ -277,7 +293,13 @@ const BrowseCars = () => {
 
         {/* Car Grid */}
         <main className="flex-1">
-          {filteredCars.length > 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: CARS_PER_PAGE }).map((_, i) => (
+                <PlaceholderCard key={i} />
+              ))}
+            </div>
+          ) : filteredCars.length > 0 ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {filteredCars.map((car, i) => (
                 <div key={car.id} className="animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
