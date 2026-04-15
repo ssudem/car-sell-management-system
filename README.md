@@ -4,6 +4,8 @@ A full-stack car selling platform where admins manage car inventory and users br
 
 ---
 
+🌐 **Live Website:** [VisionCarsCITK.com](https://car-sell-system-sudemok.netlify.app/)
+
 ## ✨ Features
 
 ### 👤 User Features
@@ -189,12 +191,6 @@ npm run dev
 | GET    | `/api/admin/stats`       | Admin | Dashboard stats                         |
 | GET    | `/api/admin/activity`    | Admin | Recent activity feed                    |
 | PUT    | `/users/me/password`     | User  | user/admin Own password Change          |
-
----
-
-## 📸 Screenshots
-
-> Add screenshots of your application here
 
 ---
 
