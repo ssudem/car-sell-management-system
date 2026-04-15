@@ -17,11 +17,15 @@ import { API_URL } from "@/config/api";
 import axios from "axios";
 import type { Car } from "@/types/car";
 
+const heroVideo = "https://res.cloudinary.com/dbcovjgwo/video/upload/v1776230487/BMW_M3_Competition_-_4K_Cinematic_Short_Video_1440p_o5i0wi.mp4";
+
 // const Index = () => {
 function Index(){
   const [searchQuery, setSearchQuery] = useState("");
   const [featuredCars, setFeaturedCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
+
+  
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -46,8 +50,16 @@ function Index(){
       <section className="relative flex min-h-[520px] items-center overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0">
-          <img src={heroBg} alt="Luxury car" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/40 dark:from-background/90 dark:via-background/70 dark:to-background/40" />
+          {/* <img src={heroBg} alt="Luxury car" className="h-full w-full object-cover" /> */}
+          <video
+            src={heroVideo}
+            autoPlay
+            loop
+            muted
+            className="h-full w-full object-cover"
+          />
+          {/* Gradient overlay for better text contrast */}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/40 via-primary/40 to-primary/40 dark:from-background/90 dark:via-background/70 dark:to-background/40" />
         </div>
 
         {/* Hero content */}
