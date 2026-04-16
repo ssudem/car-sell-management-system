@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Heart, ArrowLeft, Fuel, Calendar, Gauge, Settings, Send, ShoppingCart, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { API_URL, getAuthHeaders } from "@/config/api";
 import axios from "axios";
@@ -60,8 +61,71 @@ const CarDetails = () => {
   }, [id]);
 
   if (loading) {
-    return <div className="py-20 text-center">Loading...</div>;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        {/* Back Link Skeleton */}
+        <div className="mb-6 flex items-center gap-2">
+          <Skeleton className="h-4 w-4" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-5">
+          {/* Gallery Skeleton */}
+          <div className="lg:col-span-3">
+            <Skeleton className="aspect-video w-full rounded-lg lg:h-[480px]" />
+            <div className="mt-3 flex flex-wrap justify-center gap-2 pb-2 lg:justify-start">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-16 w-24 rounded-md" />
+              ))}
+            </div>
+          </div>
+
+          {/* Info Side Skeleton */}
+          <div className="lg:col-span-2">
+            <Skeleton className="h-8 w-3/4 rounded-lg md:h-10" />
+            <Skeleton className="mt-2 h-8 w-1/4 rounded-lg" />
+
+            <div className="mt-3 space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Skeleton className="h-10 w-36 rounded-md" />
+              <Skeleton className="h-10 w-32 rounded-md" />
+            </div>
+
+            {/* Specs Table Skeleton */}
+            <div className="mt-6 overflow-hidden rounded-lg border border-border">
+              <div className="h-12 bg-muted/50" />
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="flex items-center justify-between border-t border-border p-4">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4 rounded-full" />
+                    <Skeleton className="h-4 w-20" />
+                  </div>
+                  <Skeleton className="h-4 w-28" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Inquiry Form Skeleton */}
+        <div className="mx-auto mt-12 max-w-2xl rounded-lg border border-border p-6">
+          <Skeleton className="mb-6 h-7 w-48" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Skeleton className="h-11 w-full rounded-lg" />
+            <Skeleton className="h-11 w-full rounded-lg" />
+          </div>
+          <Skeleton className="mt-4 h-32 w-full rounded-lg" />
+          <Skeleton className="mt-4 h-10 w-32 rounded-lg" />
+        </div>
+      </div>
+    );
   }
+
 
   // If car not found
   if (!car) {
