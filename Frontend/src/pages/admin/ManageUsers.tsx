@@ -2,7 +2,7 @@
 // View all users, delete non-admin users, promote users to admin, update passwords.
 
 import { useState, useEffect } from "react";
-import { Trash2, ShieldCheck, Users, Search, RefreshCw, KeyRound, Eye, EyeOff } from "lucide-react";
+import { Trash2, ShieldCheck, Users, Search, RefreshCw, KeyRound, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     AlertDialog,
@@ -133,7 +133,12 @@ const ManageUsers = () => {
     );
 
     if (loading) {
-        return <div className="py-20 text-center">Loading users...</div>;
+        return (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+                <Loader2 className="mb-4 h-8 w-8 animate-spin text-accent" />
+                <p className="text-muted-foreground">Loading users...</p>
+            </div>
+        );
     }
 
     return (
@@ -170,9 +175,9 @@ const ManageUsers = () => {
                     <p className="text-muted-foreground">{search ? "No users match your search." : "No users found."}</p>
                 </div>
             ) : (
-                <div className="overflow-x-auto rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="bg-secondary">
+                <div className="rounded-lg border">
+                    <table className="block w-full text-sm md:table">
+                        <thead className="hidden bg-secondary md:table-header-group">
                             <tr>
                                 <th className="px-4 py-3 text-left font-heading font-semibold text-foreground">User</th>
                                 <th className="px-4 py-3 text-left font-heading font-semibold text-foreground">Email</th>
@@ -181,11 +186,12 @@ const ManageUsers = () => {
                                 <th className="px-4 py-3 text-right font-heading font-semibold text-foreground">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="block md:table-row-group">
                             {filteredUsers.map((user) => (
-                                <tr key={user.id} className="border-t">
+                                <tr key={user.id} className="flex flex-col border-t p-4 md:table-row md:p-0">
                                     {/* Avatar + Name */}
-                                    <td className="px-4 py-3">
+                                    <td className="flex items-center justify-between px-4 py-2 md:table-cell md:py-3">
+                                        <span className="font-bold text-foreground md:hidden">User</span>
                                         <div className="flex items-center gap-3">
                                             {user.avatar ? (
                                                 <img src={user.avatar} alt={user.name} className="h-8 w-8 rounded-full object-cover" />
@@ -199,10 +205,14 @@ const ManageUsers = () => {
                                     </td>
 
                                     {/* Email */}
-                                    <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
+                                    <td className="flex items-center justify-between px-4 py-2 text-muted-foreground md:table-cell md:py-3">
+                                        <span className="font-bold text-foreground md:hidden">Email</span>
+                                        <span className="truncate max-w-[200px] sm:max-w-none">{user.email}</span>
+                                    </td>
 
                                     {/* Role Badge */}
-                                    <td className="px-4 py-3">
+                                    <td className="flex items-center justify-between px-4 py-2 md:table-cell md:py-3">
+                                        <span className="font-bold text-foreground md:hidden">Role</span>
                                         {user.role === "admin" ? (
                                             <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent">
                                                 <ShieldCheck className="h-3 w-3" /> Admin
@@ -215,13 +225,15 @@ const ManageUsers = () => {
                                     </td>
 
                                     {/* Joined Date */}
-                                    <td className="px-4 py-3 text-muted-foreground">
-                                        {new Date(user.created_at).toLocaleDateString("en-GB")}
+                                    <td className="flex items-center justify-between px-4 py-2 text-muted-foreground md:table-cell md:py-3">
+                                        <span className="font-bold text-foreground md:hidden">Joined</span>
+                                        <span>{new Date(user.created_at).toLocaleDateString("en-GB")}</span>
                                     </td>
 
                                     {/* Actions */}
-                                    <td className="px-4 py-3">
-                                        <div className="flex items-center justify-end gap-2">
+                                    <td className="flex items-center justify-between px-4 py-2 md:table-cell md:py-3 md:text-right">
+                                        <span className="font-bold text-foreground md:hidden">Actions</span>
+                                        <div className="flex items-center justify-end gap-3 flex-wrap">
                                             {/* Password Button — available for all users */}
                                             <Button
                                                 variant="outline"

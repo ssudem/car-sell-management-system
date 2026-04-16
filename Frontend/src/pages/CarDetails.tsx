@@ -36,6 +36,11 @@ const CarDetails = () => {
   const [paymentStep, setPaymentStep] = useState<"confirm" | "processing" | "success">("confirm");
 
   useEffect(() => {
+    // Scroll to top when this page opens
+    window.scrollTo(0, 0);
+  }, [id]);
+
+  useEffect(() => {
     const fetchCarAndWishlist = async () => {
       setLoading(true);
       try {

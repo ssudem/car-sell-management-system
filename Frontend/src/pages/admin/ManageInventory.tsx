@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ const getStatusClasses = (status: Car["status"]) => {
 
 const ManageInventory = () => {
   const [cars, setCars] = useState<Car[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // API logic to fetch cars
@@ -33,6 +34,8 @@ const ManageInventory = () => {
       } catch (error) {
         console.error("Error fetching cars line 31", error);
         toast.error("Failed to fetch cars");
+      } finally {
+        setLoading(false);
       }
     };
     fetchCars();
@@ -49,6 +52,15 @@ const ManageInventory = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <Loader2 className="mb-4 h-8 w-8 animate-spin text-accent" />
+        <p className="text-muted-foreground">Loading inventory...</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -60,9 +72,9 @@ const ManageInventory = () => {
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border">
-        <table className="w-full text-sm">
-          <thead className="bg-secondary">
+      <div className="rounded-lg border">
+        <table className="block w-full text-sm md:table">
+          <thead className="hidden bg-secondary md:table-header-group">
             <tr>
               <th className="px-4 py-3 text-left font-heading font-semibold text-foreground">Car</th>
               <th className="px-4 py-3 text-left font-heading font-semibold text-foreground">Price</th>
@@ -71,25 +83,36 @@ const ManageInventory = () => {
               <th className="px-4 py-3 text-right font-heading font-semibold text-foreground">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="block md:table-row-group">
             {cars.map((car) => (
-              <tr key={car.id} className="border-t">
-                <td className="flex items-center gap-3 px-4 py-3">
-                  <img
-                    src={car.image}
-                    alt={car.title}
-                    className="h-10 w-14 rounded object-cover"
-                  />
-                  <span className="font-medium text-foreground">{car.title}</span>
+              <tr key={car.id} className="flex flex-col border-t p-4 md:table-row md:p-0">
+                <td className="flex items-center justify-between px-4 py-2 md:table-cell md:py-3">
+                  <span className="font-bold text-foreground md:hidden pr-4">Car</span>
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={car.image}
+                      alt={car.title}
+                      className="h-10 w-14 rounded object-cover"
+                    />
+                    <span className="font-medium text-foreground text-right md:text-left">{car.title}</span>
+                  </div>
                 </td>
-                <td className="px-4 py-3 font-bold text-accent">${car.price.toLocaleString()}</td>
-                <td className="px-4 py-3 text-muted-foreground">{car.year}</td>
-                <td className="px-4 py-3">
+                <td className="flex items-center justify-between px-4 py-2 font-bold text-accent md:table-cell md:py-3">
+                  <span className="font-bold text-foreground md:hidden">Price</span>
+                  <span>${car.price.toLocaleString()}</span>
+                </td>
+                <td className="flex items-center justify-between px-4 py-2 text-muted-foreground md:table-cell md:py-3">
+                  <span className="font-bold text-foreground md:hidden">Year</span>
+                  <span>{car.year}</span>
+                </td>
+                <td className="flex items-center justify-between px-4 py-2 md:table-cell md:py-3">
+                  <span className="font-bold text-foreground md:hidden">Status</span>
                   <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusClasses(car.status)}`}>
                     {car.status}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="flex items-center justify-between px-4 py-2 md:table-cell md:py-3 md:text-right">
+                  <span className="font-bold text-foreground md:hidden">Actions</span>
                   <div className="flex justify-end gap-2">
                     <Link to={`/admin/add-car?edit=${car.id}`}>
                       <Button variant="outline" size="sm" className="gap-1">

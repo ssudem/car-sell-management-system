@@ -46,8 +46,8 @@ const AdminLayout = () => {
             to={link.to}
             onClick={() => setSidebarOpen(false)}
             className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isActive(link.to)
-                ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              ? "bg-sidebar-primary text-sidebar-primary-foreground"
+              : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               }`}
           >
             <link.icon className="h-4 w-4" />
@@ -90,14 +90,14 @@ const AdminLayout = () => {
       {/* Main Content */}
       <div className="flex flex-1 flex-col">
         {/* Mobile top bar */}
-        <header className="flex h-14 items-center gap-3 border-b bg-card px-4 md:hidden">
+        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-3 border-b bg-card px-4 md:hidden">
           <button onClick={() => setSidebarOpen(true)}>
             <Menu className="h-5 w-5 text-foreground" />
           </button>
           <span className="font-heading font-semibold text-foreground">Admin Panel</span>
         </header>
 
-        <main className="flex-1 bg-background p-4 md:p-6">
+        <main className="flex-1 min-w-0 overflow-x-hidden bg-background p-4 md:p-6">
           <Outlet />
         </main>
       </div>

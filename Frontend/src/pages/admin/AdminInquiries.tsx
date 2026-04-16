@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Mail, ExternalLink } from "lucide-react";
+import { MessageSquare, Mail, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 import { API_URL, getAuthHeaders } from "@/config/api";
@@ -48,7 +48,12 @@ const AdminInquiries = () => {
   };
 
   if (loading) {
-    return <div className="py-20 text-center">Loading inquiries...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <Loader2 className="mb-4 h-8 w-8 animate-spin text-accent" />
+        <p className="text-muted-foreground">Loading inquiries...</p>
+      </div>
+    );
   }
 
   return (

@@ -2,7 +2,7 @@
 // Stats cards at the top + recent activity table.
 
 import { useState, useEffect } from "react";
-import { Car, DollarSign, CheckCircle, ShoppingCart, MessageSquare, Users, RefreshCw } from "lucide-react";
+import { Car, DollarSign, CheckCircle, ShoppingCart, MessageSquare, Users, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { API_URL, getAuthHeaders } from "@/config/api";
@@ -78,7 +78,12 @@ const AdminDashboard = () => {
   };
 
   if (loading) {
-    return <div className="py-20 text-center">Loading dashboard...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <Loader2 className="mb-4 h-8 w-8 animate-spin text-accent" />
+        <p className="text-muted-foreground">Loading dashboard...</p>
+      </div>
+    );
   }
 
   return (
