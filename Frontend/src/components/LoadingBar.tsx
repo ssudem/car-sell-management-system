@@ -52,8 +52,9 @@ const LoadingBar = () => {
   const [visible, setVisible] = useState(false);
   const crawlTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const fallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const routeChangeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isLoadingRef = useRef(false);
+  const hasActiveRequestRef = useRef(false);
   const location = useLocation();
 
   const clearAllTimers = useCallback(() => {
@@ -65,9 +66,9 @@ const LoadingBar = () => {
       clearTimeout(hideTimerRef.current);
       hideTimerRef.current = null;
     }
-    if (fallbackTimerRef.current) {
-      clearTimeout(fallbackTimerRef.current);
-      fallbackTimerRef.current = null;
+    if (routeChangeTimeoutRef.current) {
+      clearTimeout(routeChangeTimeoutRef.current);
+      routeChangeTimeoutRef.current = null;
     }
   }, []);
 
@@ -93,6 +94,7 @@ const LoadingBar = () => {
   const completeLoading = useCallback(() => {
     if (!isLoadingRef.current) return;
     isLoadingRef.current = false;
+    hasActiveRequestRef.current = false;
 
     clearAllTimers();
     setProgress(100);
@@ -106,40 +108,38 @@ const LoadingBar = () => {
 
   // --- Route change trigger ---
   useEffect(() => {
+    hasActiveRequestRef.current = false;
     startLoading();
 
-    // Fallback: if no API call starts within 600ms, complete the bar.
-    // This handles pure navigation without data fetching.
-    // If an API call does start, the fallback is cancelled.
-    fallbackTimerRef.current = setTimeout(() => {
-      if (activeRequests === 0) {
-        completeLoading();
-      }
-    }, 600);
+    // Wait 200ms to see if an API request arrives.
+    // If not, keep loading anyway (no forced completion).
+    routeChangeTimeoutRef.current = setTimeout(() => {
+      // Just clear the timeout ref; don't do anything
+      routeChangeTimeoutRef.current = null;
+    }, 200);
 
     return () => {
-      if (fallbackTimerRef.current) {
-        clearTimeout(fallbackTimerRef.current);
-        fallbackTimerRef.current = null;
+      if (routeChangeTimeoutRef.current) {
+        clearTimeout(routeChangeTimeoutRef.current);
+        routeChangeTimeoutRef.current = null;
       }
     };
-  }, [location.pathname, location.search]);
+  }, [location.pathname, location.search, startLoading]);
 
   // --- API request interceptors ---
   useEffect(() => {
     registerInterceptors();
 
     onRequestStart = () => {
-      // Cancel the route-change fallback — the API call takes over
-      if (fallbackTimerRef.current) {
-        clearTimeout(fallbackTimerRef.current);
-        fallbackTimerRef.current = null;
-      }
+      hasActiveRequestRef.current = true;
       startLoading();
     };
 
     onRequestEnd = () => {
-      completeLoading();
+      // Only complete if no new route change happened during the API call
+      if (hasActiveRequestRef.current) {
+        completeLoading();
+      }
     };
 
     return () => {
