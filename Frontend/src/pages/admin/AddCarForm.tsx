@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Upload, Save, Image as ImageIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import axios from "axios";
+import api from "@/lib/axios";
 import { API_URL, getAuthHeaders, getMultipartHeaders } from "@/config/api";
 
 import {ALL_BRANDS,FUEL_TYPES} from "../../config/CarBrands.tsx";
@@ -37,7 +37,7 @@ const AddCarForm = () => {
   // If editing, fetch existing car data
   useEffect(() => {
     if (editId) {
-      axios.get(`${API_URL}/cars/${editId}`)
+      api.get(`${API_URL}/cars/${editId}`)
         .then((res) => {
           const car = res.data;
           setForm({
@@ -58,7 +58,7 @@ const AddCarForm = () => {
           setPreviewImages(existingImages);
           setExistingImageUrls(existingImages);
         })
-        .catch(() => toast.error("Failed to load car for editing"));
+        .catch((err) => { if (err.response?.status !== 429) toast.error("Failed to load car for editing"); });
     }
   }, [editId]);
 
@@ -96,7 +96,7 @@ const AddCarForm = () => {
         const formData = new FormData();
         imageFiles.forEach((file) => formData.append("images", file));
 
-        const uploadRes = await axios.post(`${API_URL}/upload`, formData, {
+        const uploadRes = await api.post(`${API_URL}/upload`, formData, {
           headers: getMultipartHeaders(),
         });
         imageUrls = uploadRes.data.urls || [];
@@ -121,16 +121,18 @@ const AddCarForm = () => {
       };
 
       if (editId) {
-        await axios.put(`${API_URL}/cars/${editId}`, carData, { headers: getAuthHeaders() });
+        await api.put(`${API_URL}/cars/${editId}`, carData, { headers: getAuthHeaders() });
         toast.success("Car updated successfully!");
       } else {
-        await axios.post(`${API_URL}/cars`, carData, { headers: getAuthHeaders() });
+        await api.post(`${API_URL}/cars`, carData, { headers: getAuthHeaders() });
         toast.success("Car added successfully!");
       }
 
       navigate("/admin/inventory");
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to save car");
+      if (err.response?.status !== 429) {
+        toast.error(err.response?.data?.message || "Failed to save car");
+      }
     } finally {
       setSubmitting(false);
     }

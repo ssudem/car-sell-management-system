@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { Car, DollarSign, CheckCircle, ShoppingCart, MessageSquare, Users, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
+import api from "@/lib/axios";
 import { API_URL, getAuthHeaders } from "@/config/api";
 
 interface AdminStats {
@@ -33,8 +33,8 @@ const AdminDashboard = () => {
     if (isRefresh) setRefreshing(true);
     try {
       const [statsRes, activityRes] = await Promise.all([
-        axios.get(`${API_URL}/admin/stats`, { headers: getAuthHeaders() }),
-        axios.get(`${API_URL}/admin/activity`, { headers: getAuthHeaders() }),
+        api.get(`${API_URL}/admin/stats`, { headers: getAuthHeaders() }),
+        api.get(`${API_URL}/admin/activity`, { headers: getAuthHeaders() }),
       ]);
       setStats(statsRes.data);
       setActivities(activityRes.data);

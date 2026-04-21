@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const { apiLimiter, authLimiter, uploadLimiter } = require("./middleware/rateLimiter");
 
 const app = express();
 
@@ -8,9 +9,15 @@ const app = express();
 app.use(cors({
   origin: process.env.FRONTEND_URL || "http://localhost:5173",
   credentials: true,
+  exposedHeaders: ["Retry-After", "RateLimit-Policy", "RateLimit-Limit", "RateLimit-Remaining", "RateLimit-Reset"],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Rate limiting
+app.use("/api/auth", authLimiter);
+app.use("/api/upload", uploadLimiter);
+app.use("/api", apiLimiter);
 
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));

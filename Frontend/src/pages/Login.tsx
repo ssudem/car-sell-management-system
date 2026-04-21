@@ -11,7 +11,7 @@ import { Car, LogIn, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { API_URL } from "@/config/api";
-import axios from "axios";
+import api from "@/lib/axios";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+      const response = await api.post(`${API_URL}/auth/login`, { email, password });
       const data = response.data;
 
       localStorage.setItem("token", data.token);
@@ -39,7 +39,9 @@ const Login = () => {
         navigate("/dashboard");
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Invalid credentials");
+      if (error.response?.status !== 429) {
+        toast.error(error.response?.data?.message || "Invalid credentials");
+      }
     } finally {
       setLoading(false);
     }

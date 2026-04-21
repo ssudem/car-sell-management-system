@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Pencil, Trash2, Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
+import api from "@/lib/axios";
 import { toast } from "sonner";
 import type { Car } from "@/types/car";
 import { API_URL, getAuthHeaders } from "@/config/api";
@@ -29,11 +29,13 @@ const ManageInventory = () => {
     // API logic to fetch cars
     const fetchCars = async () => {
       try {
-        const response = await axios.get(`${API_URL}/cars`, { headers: getAuthHeaders() });
+        const response = await api.get(`${API_URL}/cars`, { headers: getAuthHeaders() });
         setCars(response.data);
       } catch (error) {
         console.error("Error fetching cars line 31", error);
-        toast.error("Failed to fetch cars");
+        if ((error as any).response?.status !== 429) {
+          toast.error("Failed to fetch cars");
+        }
       } finally {
         setLoading(false);
       }
@@ -43,12 +45,14 @@ const ManageInventory = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`${API_URL}/cars/${id}`, { headers: getAuthHeaders() });
+      await api.delete(`${API_URL}/cars/${id}`, { headers: getAuthHeaders() });
       setCars((prev) => prev.filter((c) => c.id !== id));
       toast.success("Car deleted successfully");
     } catch (error) {
       console.error("Error delete line 42");
-      toast.error("Failed to delete car");
+      if ((error as any).response?.status !== 429) {
+        toast.error("Failed to delete car");
+      }
     }
   };
 

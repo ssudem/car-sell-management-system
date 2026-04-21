@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Heart, MessageSquare, ShoppingBag, Trash2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import axios from "axios";
+import api from "@/lib/axios";
 import { API_URL, getAuthHeaders } from "@/config/api";
 
 // The three tabs
@@ -31,9 +31,9 @@ const UserDashboard = () => {
       setLoading(true);
       try {
         const [wishRes, inqRes, purRes] = await Promise.all([
-          axios.get(`${API_URL}/wishlist`, { headers: getAuthHeaders() }),
-          axios.get(`${API_URL}/inquiries/my`, { headers: getAuthHeaders() }),
-          axios.get(`${API_URL}/payments/my`, { headers: getAuthHeaders() }),
+          api.get(`${API_URL}/wishlist`, { headers: getAuthHeaders() }),
+          api.get(`${API_URL}/inquiries/my`, { headers: getAuthHeaders() }),
+          api.get(`${API_URL}/payments/my`, { headers: getAuthHeaders() }),
         ]);
         setWishlist(wishRes.data);
         setInquiries(inqRes.data);
@@ -49,11 +49,13 @@ const UserDashboard = () => {
 
   const handleRemoveWishlist = async (carId: number) => {
     try {
-      await axios.delete(`${API_URL}/wishlist/${carId}`, { headers: getAuthHeaders() });
+      await api.delete(`${API_URL}/wishlist/${carId}`, { headers: getAuthHeaders() });
       setWishlist((prev) => prev.filter((c) => c.id !== carId));
       toast.success("Removed from wishlist");
     } catch (err) {
-      toast.error("Failed to remove from wishlist");
+      if ((err as any).response?.status !== 429) {
+        toast.error("Failed to remove from wishlist");
+      }
     }
   };
 

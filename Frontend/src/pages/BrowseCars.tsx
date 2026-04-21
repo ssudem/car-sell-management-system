@@ -6,7 +6,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CarCard from "@/components/CarCard";
-import axios from "axios";
+import api from "@/lib/axios";
 import type { Car } from "@/types/car";
 import { API_URL } from "@/config/api";
 
@@ -104,7 +104,7 @@ const BrowseCars = () => {
         params.append("page", currentPage.toString());
         params.append("limit", CARS_PER_PAGE.toString());
 
-        const response = await axios.get(`${API_URL}/cars?${params}`);
+        const response = await api.get(`${API_URL}/cars?${params}`);
         // Ensure the response data is properly structured
         const cars = Array.isArray(response.data?.cars) ? response.data.cars :
                     Array.isArray(response.data) ? response.data : [];

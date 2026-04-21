@@ -12,7 +12,7 @@ import { User, Mail, Phone, MapPin, Calendar, Edit2, Save, ArrowLeft, Camera, Ke
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { API_URL, getAuthHeaders, getMultipartHeaders } from "@/config/api";
-import axios from "axios";
+import api from "@/lib/axios";
 
 const Profile = () => {
   const [loading, setLoading] = useState(true);
@@ -38,7 +38,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (token) {
-      axios.get(`${API_URL}/users/me`, { headers: getAuthHeaders() })
+      api.get(`${API_URL}/users/me`, { headers: getAuthHeaders() })
         .then(res => {
           setUser(res.data);
           setEditName(res.data.name || "");
@@ -47,7 +47,9 @@ const Profile = () => {
         })
         .catch(err => {
           console.error("Failed to load profile", err);
-          toast.error("Failed to load profile data");
+          if (err.response?.status !== 429) {
+            toast.error("Failed to load profile data");
+          }
         })
         .finally(() => setLoading(false));
     } else {
@@ -71,7 +73,7 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
-      const res = await axios.put(`${API_URL}/users/me`, {
+      const res = await api.put(`${API_URL}/users/me`, {
         name: editName,
         phone: editPhone,
         address: editAddress
@@ -85,7 +87,9 @@ const Profile = () => {
 
       toast.success("Profile updated successfully!");
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to update profile");
+      if (err.response?.status !== 429) {
+        toast.error(err.response?.data?.message || "Failed to update profile");
+      }
     }
   };
 
@@ -98,7 +102,7 @@ const Profile = () => {
       const formData = new FormData();
       formData.append("avatar", file);
 
-      const res = await axios.put(`${API_URL}/users/me/avatar`, formData, {
+      const res = await api.put(`${API_URL}/users/me/avatar`, formData, {
         headers: getMultipartHeaders(),
       });
 
@@ -110,7 +114,9 @@ const Profile = () => {
 
       toast.success("Profile picture updated!");
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to upload avatar");
+      if (err.response?.status !== 429) {
+        toast.error(err.response?.data?.message || "Failed to upload avatar");
+      }
     } finally {
       setUploadingAvatar(false);
     }
@@ -131,14 +137,16 @@ const Profile = () => {
     }
     setPasswordLoading(true);
     try {
-      await axios.put(`${API_URL}/users/me/password`, { oldPassword, newPassword }, { headers: getAuthHeaders() });
+      await api.put(`${API_URL}/users/me/password`, { oldPassword, newPassword }, { headers: getAuthHeaders() });
       toast.success("Password changed successfully!");
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
       setShowPasswordSection(false);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to change password");
+      if (err.response?.status !== 429) {
+        toast.error(err.response?.data?.message || "Failed to change password");
+      }
     } finally {
       setPasswordLoading(false);
     }

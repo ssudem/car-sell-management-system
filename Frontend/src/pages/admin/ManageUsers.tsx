@@ -23,7 +23,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import axios from "axios";
+import api from "@/lib/axios";
 import { toast } from "sonner";
 import { API_URL, getAuthHeaders } from "@/config/api";
 
@@ -53,11 +53,13 @@ const ManageUsers = () => {
     const fetchUsers = async (isRefresh = false) => {
         if (isRefresh) setRefreshing(true);
         try {
-            const res = await axios.get(`${API_URL}/admin/users`, { headers: getAuthHeaders() });
+            const res = await api.get(`${API_URL}/admin/users`, { headers: getAuthHeaders() });
             setUsers(res.data);
         } catch (err) {
             console.error("Failed to load users", err);
-            toast.error("Failed to load users");
+            if ((err as any).response?.status !== 429) {
+                toast.error("Failed to load users");
+            }
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -71,11 +73,13 @@ const ManageUsers = () => {
     const handleDelete = async (user: User) => {
         setActionLoading(user.id);
         try {
-            await axios.delete(`${API_URL}/admin/users/${user.id}`, { headers: getAuthHeaders() });
+            await api.delete(`${API_URL}/admin/users/${user.id}`, { headers: getAuthHeaders() });
             toast.success(`User "${user.name}" deleted successfully`);
             setUsers((prev) => prev.filter((u) => u.id !== user.id));
         } catch (err: any) {
-            toast.error(err.response?.data?.message || "Failed to delete user");
+            if (err.response?.status !== 429) {
+                toast.error(err.response?.data?.message || "Failed to delete user");
+            }
         } finally {
             setActionLoading(null);
         }
@@ -84,13 +88,15 @@ const ManageUsers = () => {
     const handlePromote = async (user: User) => {
         setActionLoading(user.id);
         try {
-            await axios.patch(`${API_URL}/admin/users/${user.id}/promote`, {}, { headers: getAuthHeaders() });
+            await api.patch(`${API_URL}/admin/users/${user.id}/promote`, {}, { headers: getAuthHeaders() });
             toast.success(`User "${user.name}" promoted to admin`);
             setUsers((prev) =>
                 prev.map((u) => (u.id === user.id ? { ...u, role: "admin" } : u))
             );
         } catch (err: any) {
-            toast.error(err.response?.data?.message || "Failed to promote user");
+            if (err.response?.status !== 429) {
+                toast.error(err.response?.data?.message || "Failed to promote user");
+            }
         } finally {
             setActionLoading(null);
         }
@@ -112,7 +118,7 @@ const ManageUsers = () => {
         }
         setPasswordLoading(true);
         try {
-            await axios.patch(
+            await api.patch(
                 `${API_URL}/admin/users/${passwordUser.id}/password`,
                 { oldPassword, newPassword },
                 { headers: getAuthHeaders() }
@@ -120,7 +126,9 @@ const ManageUsers = () => {
             toast.success(`Password updated for "${passwordUser.name}"`);
             setPasswordUser(null);
         } catch (err: any) {
-            toast.error(err.response?.data?.message || "Failed to update password");
+            if (err.response?.status !== 429) {
+                toast.error(err.response?.data?.message || "Failed to update password");
+            }
         } finally {
             setPasswordLoading(false);
         }

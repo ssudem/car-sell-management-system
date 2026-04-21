@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import CarCard from "@/components/CarCard";
 // import heroBg from "@/assets/hero-bg.jpg";
 import { API_URL } from "@/config/api";
-import axios from "axios";
+import api from "@/lib/axios";
 import type { Car } from "@/types/car";
 
 const heroVideo = "https://res.cloudinary.com/dbcovjgwo/video/upload/v1776230487/BMW_M3_Competition_-_4K_Cinematic_Short_Video_1440p_o5i0wi.mp4";
@@ -46,7 +46,7 @@ function Index(){
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const res = await axios.get(`${API_URL}/cars?status=Available&limit=4`);
+        const res = await api.get(`${API_URL}/cars?status=Available&limit=4`);
         // Ensure the response data is an array
         const cars = Array.isArray(res.data) ? res.data : res.data?.cars || res.data?.data || [];
         setFeaturedCars(cars);

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Mail, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import axios from "axios";
+import api from "@/lib/axios";
 import { API_URL, getAuthHeaders } from "@/config/api";
 
 interface Inquiry {
@@ -25,11 +25,13 @@ const AdminInquiries = () => {
   useEffect(() => {
     const fetchInquiries = async () => {
       try {
-        const res = await axios.get(`${API_URL}/inquiries`, { headers: getAuthHeaders() });
+        const res = await api.get(`${API_URL}/inquiries`, { headers: getAuthHeaders() });
         setInquiries(res.data);
       } catch (err) {
         console.error("Failed to load inquiries", err);
-        toast.error("Failed to load inquiries");
+        if ((err as any).response?.status !== 429) {
+          toast.error("Failed to load inquiries");
+        }
       } finally {
         setLoading(false);
       }
@@ -39,11 +41,13 @@ const AdminInquiries = () => {
 
   const handleReply = async (id: number) => {
     try {
-      await axios.put(`${API_URL}/inquiries/${id}`, { status: "Replied" }, { headers: getAuthHeaders() });
+      await api.put(`${API_URL}/inquiries/${id}`, { status: "Replied" }, { headers: getAuthHeaders() });
       setInquiries((prev) => prev.map((inq) => inq.id === id ? { ...inq, status: "Replied" } : inq));
       toast.success("Inquiry marked as replied");
     } catch (err) {
-      toast.error("Failed to update inquiry");
+      if ((err as any).response?.status !== 429) {
+        toast.error("Failed to update inquiry");
+      }
     }
   };
 

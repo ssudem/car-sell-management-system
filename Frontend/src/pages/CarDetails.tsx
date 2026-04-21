@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { API_URL, getAuthHeaders } from "@/config/api";
-import axios from "axios";
+import api from "@/lib/axios";
 import type { Car } from "@/types/car";
 
 const CarDetails = () => {
@@ -44,13 +44,13 @@ const CarDetails = () => {
     const fetchCarAndWishlist = async () => {
       setLoading(true);
       try {
-        const carRes = await axios.get(`${API_URL}/cars/${id}`);
+        const carRes = await api.get(`${API_URL}/cars/${id}`);
         setCar(carRes.data);
 
         // Also check wishlist status if user is logged in
         if (localStorage.getItem("token")) {
           try {
-            const wishlistRes = await axios.get(`${API_URL}/wishlist/check/${id}`, { headers: getAuthHeaders() });
+            const wishlistRes = await api.get(`${API_URL}/wishlist/check/${id}`, { headers: getAuthHeaders() });
             setSaved(wishlistRes.data.inWishlist);
           } catch (err) {
             console.error("Wishlist check failed", err);
@@ -157,15 +157,17 @@ const CarDetails = () => {
     }
     try {
       if (saved) {
-        await axios.delete(`${API_URL}/wishlist/${car.id}`, { headers: getAuthHeaders() });
+        await api.delete(`${API_URL}/wishlist/${car.id}`, { headers: getAuthHeaders() });
         toast.success("Removed from wishlist");
       } else {
-        await axios.post(`${API_URL}/wishlist`, { carId: car.id }, { headers: getAuthHeaders() });
+        await api.post(`${API_URL}/wishlist`, { carId: car.id }, { headers: getAuthHeaders() });
         toast.success("Added to wishlist!");
       }
       setSaved(!saved);
     } catch (err) {
-      toast.error("Failed to update wishlist");
+      if ((err as any).response?.status !== 429) {
+        toast.error("Failed to update wishlist");
+      }
     }
   };
 
@@ -176,7 +178,7 @@ const CarDetails = () => {
       const token = localStorage.getItem("token");
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      await axios.post(`${API_URL}/inquiries`, {
+      await api.post(`${API_URL}/inquiries`, {
         carId: car.id,
         name: inquiryName,
         email: inquiryEmail,
@@ -185,7 +187,9 @@ const CarDetails = () => {
       toast.success("Inquiry sent! The seller will contact you soon.");
       setInquiryMessage("");
     } catch (err) {
-      toast.error("Failed to send inquiry");
+      if ((err as any).response?.status !== 429) {
+        toast.error("Failed to send inquiry");
+      }
     }
   };
 
@@ -197,7 +201,7 @@ const CarDetails = () => {
     await new Promise((resolve) => setTimeout(resolve, 2500));
 
     try {
-      await axios.post(`${API_URL}/payments`, {
+      await api.post(`${API_URL}/payments`, {
         carId: car.id,
         amount: car.price,
       }, { headers: getAuthHeaders() });
@@ -217,7 +221,9 @@ const CarDetails = () => {
     } catch (err: any) {
       setPaymentStep("confirm");
       setPurchasing(false);
-      toast.error(err.response?.data?.message || "Purchase failed");
+      if (err.response?.status !== 429) {
+        toast.error(err.response?.data?.message || "Purchase failed");
+      }
     }
   };
 

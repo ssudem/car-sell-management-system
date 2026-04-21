@@ -11,7 +11,7 @@ import { Car, UserPlus, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { API_URL } from "@/config/api";
-import axios from "axios";
+import api from "@/lib/axios";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, { name, email, password });
+      const response = await api.post(`${API_URL}/auth/register`, { name, email, password });
       const data = response.data;
 
       localStorage.setItem("token", data.token);
@@ -41,7 +41,9 @@ const Register = () => {
       toast.success("Account created successfully!");
       navigate("/dashboard");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Registration failed");
+      if (error.response?.status !== 429) {
+        toast.error(error.response?.data?.message || "Registration failed");
+      }
     } finally {
       setLoading(false);
     }

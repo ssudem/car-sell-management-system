@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { Receipt, Loader2 } from "lucide-react";
-import axios from "axios";
+import api from "@/lib/axios";
 import { API_URL, getAuthHeaders } from "@/config/api";
 
 interface Transaction {
@@ -23,7 +23,7 @@ const AdminTransactions = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const res = await axios.get(`${API_URL}/payments`, { headers: getAuthHeaders() });
+        const res = await api.get(`${API_URL}/payments`, { headers: getAuthHeaders() });
         setTransactions(res.data);
       } catch (err) {
         console.error("Failed to load transactions", err);
