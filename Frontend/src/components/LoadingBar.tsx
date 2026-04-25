@@ -109,6 +109,14 @@ const LoadingBar = () => {
   // --- Route change trigger ---
   useEffect(() => {
     hasActiveRequestRef.current = false;
+
+    // Do not start loading on pages that have no initial API calls
+    const noInitialLoadPages = ['/login', '/register', '/admin/add-car'];
+    if (noInitialLoadPages.includes(location.pathname)) {
+      completeLoading(); // Ensure any previous loading is cleared
+      return;
+    }
+
     startLoading();
 
     // Wait 200ms to see if an API request arrives.
@@ -124,7 +132,7 @@ const LoadingBar = () => {
         routeChangeTimeoutRef.current = null;
       }
     };
-  }, [location.pathname, location.search, startLoading]);
+  }, [location.pathname, location.search, startLoading, completeLoading]);
 
   // --- API request interceptors ---
   useEffect(() => {
